@@ -18,14 +18,12 @@ code {
   box-sizing: border-box;
 }
 
-/* Basic responsive utilities */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* Link styles */
 a {
   color: #007bff;
   text-decoration: none;
@@ -42,12 +40,10 @@ a:hover {
   body {
     font-size: 14px;
   }
-  
   .container {
     padding: 0 10px;
   }
 }
-
 @media (max-width: 480px) {
   body {
     font-size: 13px;

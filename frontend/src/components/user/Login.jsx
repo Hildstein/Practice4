@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../../services/api";
-import styles from "../styles/Form.module.css";
+import { authAPI } from "../../api/api";
+import styles from "./Login.module.css";
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ function Login({ onLogin }) {
     e.preventDefault();
     setError("");
     setLoading(true);
-    
+
     try {
       const res = await authAPI.login(email, password);
       localStorage.setItem("token", res.data.token);
@@ -38,6 +38,7 @@ function Login({ onLogin }) {
         placeholder="Email"
         required
         disabled={loading}
+        className={styles.input}
       />
       <input
         type="password"
@@ -46,8 +47,9 @@ function Login({ onLogin }) {
         placeholder="Пароль"
         required
         disabled={loading}
+        className={styles.input}
       />
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? "Вход..." : "Войти"}
       </button>
       {error && <div className={styles.errorMessage}>{error}</div>}

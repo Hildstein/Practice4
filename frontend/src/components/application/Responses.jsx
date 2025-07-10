@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { applicationAPI } from "../services/api";
+import { applicationAPI } from "../../api/api";
 import { Link } from "react-router-dom";
-import Chat from "./Chat";
-import styles from "../styles/Card.module.css";
+import Chat from "../chat/Chat";
+import styles from "./Responses.module.css";
 
 function Responses() {
   const [applications, setApplications] = useState([]);
@@ -10,10 +10,9 @@ function Responses() {
   const [loading, setLoading] = useState(true);
   const [withdrawing, setWithdrawing] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [openedChats, setOpenedChats] = useState({}); // { [applicationId]: true }
+  const [openedChats, setOpenedChats] = useState({});
 
   useEffect(() => {
-    // Get current user from token
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -22,9 +21,7 @@ function Responses() {
           id: parseInt(payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']),
           role: payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
         });
-      } catch (err) {
-        console.error('Failed to parse token', err);
-      }
+      } catch (err) {}
     }
   }, []);
 
@@ -48,7 +45,6 @@ function Responses() {
     setWithdrawing(applicationId);
     try {
       await applicationAPI.withdrawApplication(applicationId);
-      // Refresh applications list
       const res = await applicationAPI.getApplications();
       setApplications(res.data);
       setError("");
@@ -72,10 +68,10 @@ function Responses() {
 
   const getStatusColor = (status) => {
     const colorMap = {
-      0: "#6c757d", // New - gray
-      1: "#ffc107", // Withdrawn - yellow
-      2: "#28a745", // Accepted - green
-      3: "#dc3545"  // Rejected - red
+      0: "#6c757d",
+      1: "#ffc107",
+      2: "#28a745",
+      3: "#dc3545"
     };
     return colorMap[status] || "#6c757d";
   };
@@ -92,7 +88,7 @@ function Responses() {
   return (
     <div className={styles.container}>
       <h2>{currentUser?.role === "Employer" ? "Отклики на мои вакансии" : "Мои отклики"}</h2>
-      {error && <div style={{ color: "#dc3545", textAlign: "center", marginBottom: "20px" }}>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
       {applications.length === 0 ? (
         <div className={styles.emptyState}>
           {currentUser?.role === "Employer" 
@@ -100,50 +96,30 @@ function Responses() {
             : "У вас пока нет откликов."}
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div className={styles.list}>
           {applications.map(app => (
-            <div 
-              key={app.id} 
-              className={styles.card}
-              style={{ position: "relative" }}
-            >
-              <h3 style={{ margin: "0 0 10px 0" }}>{app.vacancyTitle}</h3>
+            <div key={app.id} className={styles.card}>
+              <h3>{app.vacancyTitle}</h3>
               <p>
                 <strong>Кандидат:</strong> {app.candidateName}
                 {currentUser?.role === "Employer" && (
-                  <span style={{
-                    marginLeft: "12px",
-                    color: "#888",
-                    fontStyle: "italic",
-                    fontSize: "12px"
-                  }}>
-                    (ID: {app.candidateId})
-                  </span>
+                  <span className={styles.candidateId}>(ID: {app.candidateId})</span>
                 )}
               </p>
               <p><strong>Дата отклика:</strong> {new Date(app.appliedAt).toLocaleDateString()}</p>
               <p>
                 <strong>Статус:</strong>
-                <span style={{
-                  marginLeft: "10px",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  backgroundColor: getStatusColor(app.status),
-                  color: "white",
-                  fontSize: "12px"
-                }}>
+                <span
+                  className={styles.status}
+                  style={{ backgroundColor: getStatusColor(app.status) }}
+                >
                   {getStatusText(app.status)}
                 </span>
               </p>
-              <div style={{ marginTop: 12, display: "flex", gap: 12 }}>
-                <Link 
+              <div className={styles.actions}>
+                <Link
                   to={`/application/${app.id}`}
-                  style={{
-                    textDecoration: "none",
-                    color: "#007bff",
-                    fontWeight: "bold",
-                    fontSize: "14px"
-                  }}
+                  className={styles.detailsBtn}
                 >
                   Подробнее
                 </Link>
@@ -151,15 +127,7 @@ function Responses() {
                   <button
                     onClick={() => handleWithdraw(app.id)}
                     disabled={withdrawing === app.id}
-                    style={{
-                      padding: "5px 10px",
-                      backgroundColor: "#ffc107",
-                      color: "#333",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "12px"
-                    }}
+                    className={styles.withdrawBtn}
                   >
                     {withdrawing === app.id ? "Отзываем..." : "Отозвать"}
                   </button>
@@ -167,22 +135,14 @@ function Responses() {
                 {currentUser?.role === "Employer" && (
                   <button
                     onClick={() => toggleChat(app.id)}
-                    style={{
-                      padding: "5px 10px",
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "12px"
-                    }}
+                    className={styles.chatBtn}
                   >
                     {openedChats[app.id] ? "Скрыть чат" : "Открыть чат"}
                   </button>
                 )}
               </div>
               {currentUser?.role === "Employer" && openedChats[app.id] && (
-                <div style={{ marginTop: 16 }}>
+                <div className={styles.chatBlock}>
                   <Chat
                     vacancyId={app.vacancyId}
                     candidateId={app.candidateId}

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { applicationAPI } from "../../services/api";
-import Chat from "../Chat";
-import styles from "../styles/Card.module.css";
+import { applicationAPI } from "../../api/api";
+import Chat from "../chat/Chat";
+import styles from "./ApplicationDetail.module.css";
 
 function ApplicationDetail() {
   const { id } = useParams();
@@ -18,17 +18,11 @@ function ApplicationDetail() {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         setCurrentUser({
-          id: parseInt(
-            payload[
-              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-            ]
-          ),
-          role: payload[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ],
+          id: parseInt(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]),
+          role: payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
         });
       } catch (err) {
-        console.error("Failed to parse token", err);
+        // ignore
       }
     }
 
@@ -39,11 +33,7 @@ function ApplicationDetail() {
       } catch (err) {
         const errorMessage =
           err.message || err.response?.data || "Ошибка при загрузке отклика";
-        setError(
-          typeof errorMessage === "string"
-            ? errorMessage
-            : "Ошибка при загрузке отклика"
-        );
+        setError(typeof errorMessage === "string" ? errorMessage : "Ошибка при загрузке отклика");
       } finally {
         setLoading(false);
       }
@@ -59,11 +49,7 @@ function ApplicationDetail() {
     } catch (err) {
       const errorMessage =
         err.message || err.response?.data || "Ошибка при обновлении статуса";
-      setError(
-        typeof errorMessage === "string"
-          ? errorMessage
-          : "Ошибка при обновлении статуса"
-      );
+      setError(typeof errorMessage === "string" ? errorMessage : "Ошибка при обновлении статуса");
     }
   };
 
@@ -96,7 +82,7 @@ function ApplicationDetail() {
   if (error)
     return (
       <div className={styles.container}>
-        <div style={{ color: "#dc3545" }}>{error}</div>
+        <div className={styles.error}>{error}</div>
       </div>
     );
   if (!application)
@@ -108,34 +94,17 @@ function ApplicationDetail() {
 
   return (
     <div className={styles.container}>
-      <div style={{ marginBottom: "20px" }}>
+      <div className={styles.applicationCard}>
         <h2>Отклик на вакансию</h2>
-
-        <div
-          style={{
-            padding: "20px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            backgroundColor: "#fff",
-            marginBottom: "20px",
-          }}
-        >
-          <h3 style={{ margin: "0 0 10px 0" }}>{application.vacancyTitle}</h3>
+        <div className={styles.infoBlock}>
+          <h3>{application.vacancyTitle}</h3>
           <p>
             <strong>Кандидат:</strong> {application.candidateName}
           </p>
           {application.candidateResume && (
-            <div style={{ margin: "15px 0" }}>
+            <div className={styles.resumeBox}>
               <strong>Резюме кандидата:</strong>
-              <div
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "6px",
-                  background: "#f8f9fa",
-                  padding: "10px",
-                  marginTop: "5px",
-                }}
-              >
+              <div className={styles.resumeText}>
                 {application.candidateResume}
               </div>
             </div>
@@ -147,30 +116,18 @@ function ApplicationDetail() {
           <p>
             <strong>Статус:</strong>
             <span
+              className={styles.status}
               style={{
-                marginLeft: "10px",
-                padding: "4px 8px",
-                borderRadius: "4px",
                 backgroundColor: getStatusColor(application.status),
-                color: "white",
-                fontSize: "12px",
               }}
             >
               {getStatusText(application.status)}
             </span>
           </p>
-
           {currentUser && currentUser.role === "Employer" && (
-            <div style={{ marginTop: "15px" }}>
+            <div className={styles.statusControls}>
               <strong>Изменить статус:</strong>
-              <div
-                style={{
-                  marginTop: "5px",
-                  display: "flex",
-                  gap: "10px",
-                  flexWrap: "wrap",
-                }}
-              >
+              <div className={styles.statusBtnRow}>
                 {[
                   { value: 2, label: "Принять", color: "#28a745" },
                   { value: 3, label: "Отклонить", color: "#dc3545" },
@@ -179,23 +136,11 @@ function ApplicationDetail() {
                     key={status.value}
                     onClick={() => handleStatusUpdate(status.value)}
                     disabled={application.status === status.value}
+                    className={styles.statusBtn}
                     style={{
-                      padding: "5px 10px",
-                      backgroundColor:
-                        application.status === status.value
-                          ? status.color
-                          : "white",
-                      color:
-                        application.status === status.value
-                          ? "white"
-                          : status.color,
-                      border: `1px solid ${status.color}`,
-                      borderRadius: "4px",
-                      cursor:
-                        application.status === status.value
-                          ? "not-allowed"
-                          : "pointer",
-                      fontSize: "12px",
+                      backgroundColor: application.status === status.value ? status.color : "white",
+                      color: application.status === status.value ? "white" : status.color,
+                      borderColor: status.color,
                     }}
                   >
                     {status.label}
@@ -205,13 +150,14 @@ function ApplicationDetail() {
             </div>
           )}
         </div>
-
         {currentUser && application && (
-          <Chat
-            vacancyId={application.vacancyId}
-            candidateId={application.candidateId}
-            currentUserId={currentUser.id}
-          />
+          <div className={styles.chatBlock}>
+            <Chat
+              vacancyId={application.vacancyId}
+              candidateId={application.candidateId}
+              currentUserId={currentUser.id}
+            />
+          </div>
         )}
       </div>
     </div>

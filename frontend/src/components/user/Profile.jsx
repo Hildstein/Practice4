@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { userAPI } from "../../services/api";
-import styles from "../styles/Card.module.css";
+import { userAPI } from "../../api/api";
+import styles from "./Profile.module.css";
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -18,18 +18,18 @@ function Profile() {
         setLoading(false);
       }
     };
-    
+
     fetchProfile();
   }, []);
 
   if (loading) return <div className={styles.container}><div className={styles.emptyState}>Загрузка...</div></div>;
-  if (error) return <div className={styles.container}><div style={{ color: "#dc3545", textAlign: "center" }}>{error}</div></div>;
+  if (error) return <div className={styles.container}><div className={styles.error}>{error}</div></div>;
   if (!profile) return <div className={styles.container}><div className={styles.emptyState}>Профиль не найден</div></div>;
 
   return (
     <div className={styles.container}>
       <h2>Профиль</h2>
-      <div className={styles.card}>
+      <div className={styles.profileCard}>
         <p><b>Email:</b> {profile.email}</p>
         <p><b>Имя:</b> {profile.name}</p>
         <p><b>Телефон:</b> {profile.phone}</p>

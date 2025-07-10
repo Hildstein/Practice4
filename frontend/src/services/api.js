@@ -6,7 +6,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor to add JWT token to headers
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -15,29 +14,19 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle 401 errors (invalid token)
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid, remove it and redirect to login
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
-    
-    // Improve error handling - extract meaningful error messages
     if (error.response?.data) {
       if (typeof error.response.data === 'object') {
-        // If it's a validation error object, extract the message
         if (error.response.data.errors) {
-          // ASP.NET validation errors
           const firstError = Object.values(error.response.data.errors)[0];
           error.message = Array.isArray(firstError) ? firstError[0] : firstError;
         } else if (error.response.data.message) {
@@ -49,7 +38,6 @@ api.interceptors.response.use(
         error.message = error.response.data;
       }
     }
-    
     return Promise.reject(error);
   }
 );
@@ -86,7 +74,7 @@ export const applicationAPI = {
 };
 
 export const messageAPI = {
- getMessages: (vacancyId, candidateId) =>
+  getMessages: (vacancyId, candidateId) =>
     api.get(`/messages/vacancy/${vacancyId}/candidate/${candidateId}`),
   createMessage: (messageData) => api.post('/messages', messageData),
 };

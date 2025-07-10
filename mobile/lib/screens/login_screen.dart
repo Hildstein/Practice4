@@ -12,18 +12,28 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String _error = '';
+  bool _loading = false;
 
   Future<void> _login() async {
+    setState(() {
+      _error = '';
+      _loading = true;
+    });
+
     final api = ApiService();
-    final success = await api.login(
-      _emailController.text,
+    final token = await api.login(
+      _emailController.text.trim(),
       _passwordController.text,
     );
-    if (success) {
+    setState(() {
+      _loading = false;
+    });
+    if (token != null) {
+      // Можно сохранить токен в SharedPreferences, если нужно
       Navigator.pushReplacementNamed(context, '/jobs');
     } else {
       setState(() {
-        _error = 'Ошибка входа';
+        _error = 'Ошибка входа. Проверьте email и пароль.';
       });
     }
   }
@@ -39,15 +49,25 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Пароль'),
               obscureText: true,
             ),
-            ElevatedButton(onPressed: _login, child: const Text('Войти')),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _loading ? null : _login,
+              child: _loading
+                  ? const CircularProgressIndicator()
+                  : const Text('Войти'),
+            ),
             if (_error.isNotEmpty)
-              Text(_error, style: const TextStyle(color: Colors.red)),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(_error, style: const TextStyle(color: Colors.red)),
+              ),
           ],
         ),
       ),

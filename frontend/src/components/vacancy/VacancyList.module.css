@@ -1,0 +1,12 @@
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.emptyMessage {
+  color: #888;
+  text-align: center;
+  margin-top: 35px;
+  font-size: 1.1em;
+}

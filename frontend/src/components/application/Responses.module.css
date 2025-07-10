@@ -1,0 +1,30 @@
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status {
+  padding: 4px 12px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+.pending { background: #f0ad4e; }
+.accepted { background: #5cb85c; }
+.rejected { background: #d9534f; }
+.footer {
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+}

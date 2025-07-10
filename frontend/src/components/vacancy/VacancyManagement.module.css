@@ -1,0 +1,24 @@
+.managementContainer {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 18px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.empty {
+  text-align: center;
+  color: #949494;
+  margin-top: 24px;
+}

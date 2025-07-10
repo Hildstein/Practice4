@@ -1,0 +1,63 @@
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 22px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1a2a4b;
+  margin: 0;
+}
+
+.city {
+  background: #e0f0ff;
+  color: #0077cc;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.95em;
+}
+
+.statusBadge {
+  padding: 5px 14px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.open { background: #5cb85c; }
+.closed { background: #d9534f; }
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.detailsBtn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.detailsBtn:hover {
+  background: #0056b3;
+}

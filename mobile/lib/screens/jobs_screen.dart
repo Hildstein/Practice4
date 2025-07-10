@@ -38,7 +38,7 @@ class _JobsScreenState extends State<JobsScreen> {
               final job = jobs[index];
               return ListTile(
                 title: Text(job.title),
-                subtitle: Text('${job.company}, ${job.location}'),
+                subtitle: Text('${job.employerName}, ${job.city}'),
                 onTap: () {
                   Navigator.pushNamed(
                     context,

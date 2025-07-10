@@ -25,11 +25,14 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailController.text.trim(),
       _passwordController.text,
     );
+
+    if (!mounted)
+      return; // <--- добавлено для безопасного использования context
+
     setState(() {
       _loading = false;
     });
     if (token != null) {
-      // Можно сохранить токен в SharedPreferences, если нужно
       Navigator.pushReplacementNamed(context, '/jobs');
     } else {
       setState(() {

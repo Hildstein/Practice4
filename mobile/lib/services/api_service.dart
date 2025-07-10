@@ -19,9 +19,20 @@ class ApiService {
     final response = await http.get(
       Uri.parse('$baseUrl/vacancies?page=1&pageSize=30'),
     );
+    print('Ответ вакансий: ${response.body}');
     if (response.statusCode == 200) {
-      final List data = json.decode(response.body);
-      return data.map((json) => Job.fromJson(json)).toList();
+      final decoded = json.decode(response.body);
+      // Если это просто массив
+      if (decoded is List) {
+        return decoded.map((json) => Job.fromJson(json)).toList();
+      }
+      // Если внутри поле items
+      if (decoded is Map<String, dynamic> && decoded.containsKey('items')) {
+        final jobsList = decoded['items'] as List;
+        return jobsList.map((json) => Job.fromJson(json)).toList();
+      }
+      // Иначе ошибка
+      throw Exception('Неожиданный формат ответа: ${response.body}');
     } else {
       throw Exception('Ошибка загрузки вакансий');
     }

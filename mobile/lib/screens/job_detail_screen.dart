@@ -36,7 +36,7 @@ class JobDetailScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${job.company}, ${job.location}',
+                  '${job.employerName}, ${job.city}',
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 16),

@@ -18,5 +18,9 @@ namespace Backend.DTO
         [Required]
         [MinLength(6, ErrorMessage = "Пароль должен быть не менее 6 символов")]
         public string Password { get; set; } = null!;
+
+        [Required]
+        [StringLength(2000, MinimumLength = 10, ErrorMessage = "Описание компании должно быть от 10 до 2000 символов")]
+        public string About { get; set; } = null!;
     }
 }

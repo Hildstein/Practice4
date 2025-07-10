@@ -60,6 +60,7 @@ namespace Backend.Controllers
                 Phone = request.Phone,
                 Name = request.Name,
                 Resume = null, // Employers don't have resumes
+                About = request.About,
                 PasswordHash = HashPassword(request.Password),
                 Role = UserRole.Employer
             };

@@ -1,0 +1,15 @@
+.container {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 28px;
+}
+
+.profileCard {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}

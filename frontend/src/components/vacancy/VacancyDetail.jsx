@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { vacancyAPI } from "../../api/api";
 import styles from "./VacancyDetail.module.css";
 
@@ -25,7 +25,16 @@ function VacancyDetail() {
       <h2>{vacancy.title}</h2>
       <div className={styles.infoRow}><b>Описание:</b> {vacancy.description}</div>
       <div className={styles.infoRow}><b>Город:</b> {vacancy.city}</div>
-      <div className={styles.infoRow}><b>Работодатель:</b> {vacancy.employerName}</div>
+      <div className={styles.infoRow}>
+        <b>Работодатель:</b>{" "}
+        {vacancy.employerId ? (
+          <Link to={`/user/${vacancy.employerId}`}>
+            {vacancy.employerName}
+          </Link>
+        ) : (
+          vacancy.employerName
+        )}
+      </div>
       <div className={styles.infoRow}><b>Email:</b> {vacancy.employerEmail}</div>
       <div className={styles.infoRow}><b>Телефон:</b> {vacancy.employerPhone}</div>
     </div>

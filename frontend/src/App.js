@@ -14,6 +14,7 @@ import ApplicationDetail from "./components/application/ApplicationDetail";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import VacancyDetail from "./components/vacancy/VacancyDetail";
+import PublicProfile from "./components/user/PublicProfile";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -50,6 +51,7 @@ function App() {
           <Route path="/register" element={<RegisterChoice />} />
           <Route path="/register/candidate" element={<CandidateRegister />} />
           <Route path="/register/employer" element={<EmployerRegister />} />
+          <Route path="/user/:id" element={<PublicProfile />} />
 
           {/* Protected routes for all authenticated users */}
           <Route path="/profile" element={

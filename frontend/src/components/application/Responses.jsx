@@ -83,7 +83,11 @@ function Responses() {
     }));
   };
 
-  if (loading) return <div className={styles.container}><div className={styles.emptyState}>Загрузка откликов...</div></div>;
+  if (loading) return (
+    <div className={styles.container}>
+      <div className={styles.emptyState}>Загрузка откликов...</div>
+    </div>
+  );
 
   return (
     <div className={styles.container}>
@@ -99,12 +103,19 @@ function Responses() {
         <div className={styles.list}>
           {applications.map(app => (
             <div key={app.id} className={styles.card}>
-              <h3>{app.vacancyTitle}</h3>
+              <h3>
+                <Link to={`/vacancy/${app.vacancyId}`}>
+                  {app.vacancyTitle}
+                </Link>
+              </h3>
               <p>
-                <strong>Кандидат:</strong> {app.candidateName}
-                {currentUser?.role === "Employer" && (
-                  <span className={styles.candidateId}>(ID: {app.candidateId})</span>
+                <strong>Кандидат:</strong>{" "}
+                {app.candidateId ? (
+                  <Link to={`/user/${app.candidateId}`}>{app.candidateName}</Link>
+                ) : (
+                  app.candidateName
                 )}
+                <span className={styles.candidateId}>(ID: {app.candidateId})</span>
               </p>
               <p><strong>Дата отклика:</strong> {new Date(app.appliedAt).toLocaleDateString()}</p>
               <p>

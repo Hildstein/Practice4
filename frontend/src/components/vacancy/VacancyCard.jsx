@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { applicationAPI } from "../../api/api";
 import styles from "./VacancyCard.module.css";
 
@@ -81,7 +82,16 @@ function VacancyCard({ vacancy }) {
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>{vacancy.title}</h3>
-      <p><b>Работодатель:</b> {vacancy.employerName || "Неизвестно"}</p>
+      <p>
+        <b>Работодатель:</b>{" "}
+        {vacancy.employerId ? (
+          <Link to={`/user/${vacancy.employerId}`}>
+            {vacancy.employerName || "Неизвестно"}
+          </Link>
+        ) : (
+          vacancy.employerName || "Неизвестно"
+        )}
+      </p>
       <p><b>Описание:</b> {vacancy.description}</p>
       <p className={styles.city}><b>Город:</b> {vacancy.city}</p>
       {shouldShowApplyButton && (

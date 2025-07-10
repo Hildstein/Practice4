@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Login from "./components/Login";
-import RegisterChoice from "./components/RegisterChoice";
-import CandidateRegister from "./components/CandidateRegister";
-import EmployerRegister from "./components/EmployerRegister";
-import VacancyList from "./components/VacancyList";
-import Profile from "./components/Profile";
-import Responses from "./components/Responses";
-import VacancyManagement from "./components/VacancyManagement";
-import VacancyForm from "./components/VacancyForm";
-import ApplicationDetail from "./components/ApplicationDetail";
-import ProtectedRoute from "./components/ProtectedRoute";
-import RoleProtectedRoute from "./components/RoleProtectedRoute";
-import VacancyDetail from "./components/VacancyDetail";
+import Header from "./components/common/Header";
+import Login from "./components/user/Login";
+import RegisterChoice from "./components/user/RegisterChoice";
+import CandidateRegister from "./components/user/CandidateRegister";
+import EmployerRegister from "./components/user/EmployerRegister";
+import VacancyList from "./components/vacancy/VacancyList";
+import Profile from "./components/user/Profile";
+import Responses from "./components/application/Responses";
+import VacancyManagement from "./components/vacancy/VacancyManagement";
+import VacancyForm from "./components/vacancy/VacancyForm";
+import ApplicationDetail from "./components/application/ApplicationDetail";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+import VacancyDetail from "./components/vacancy/VacancyDetail";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -34,7 +34,7 @@ function App() {
           <Route path="/register" element={<RegisterChoice />} />
           <Route path="/register/candidate" element={<CandidateRegister />} />
           <Route path="/register/employer" element={<EmployerRegister />} />
-          
+
           {/* Protected routes for all authenticated users */}
           <Route path="/profile" element={
             <ProtectedRoute>
@@ -51,10 +51,7 @@ function App() {
               <ApplicationDetail />
             </ProtectedRoute>
           } />
-          
 
-
-          
           {/* Routes for employers only */}
           <Route path="/my-vacancies" element={
             <RoleProtectedRoute allowedRoles={["Employer"]}>
@@ -71,7 +68,7 @@ function App() {
               <VacancyForm />
             </RoleProtectedRoute>
           } />
-          
+
           {/* Legacy route redirects */}
           <Route path="/responses" element={
             <RoleProtectedRoute allowedRoles={["Candidate", "Employer"]}>

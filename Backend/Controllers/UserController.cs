@@ -8,26 +8,22 @@ using System.Security.Claims;
 
 namespace Backend.Controllers
 {
-    [ApiController] // атрибут/метка — помечает класс как Web API контроллер (обработка HTTP-запросов)
-                    // (Упрощённая обработка данных: параметры из тела запроса, строки запроса и других источников автоматически подставляются в аргументы методов)
-                    // В общем без [ApiController] пришлось бы вручную проверять, а все ли обязательные поля заполнены, а так это делается за меня
-    [Route("api/[controller]")] // маршрут: адрес будет /api/User (User — имя этого контроллера) (задаёт путь по которому будет доступен контроллер)
-    [Authorize] // 
-    public class UserController : ControllerBase // ControllerBase — это специальный базовый класс из ASP.NET Core.
-                                                 // В нём уже реализован весь “скелет” для работы с HTTP (запросы/ответы, коды ошибок, сериализация данных и прочее).
-                                                 // Мой класс UserController наследует его и получает все эти возможности.
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class UserController : ControllerBase
     {
-        private readonly AppDbContext _context; // _context — это приватное поле (переменная внутри класса), через которое я работаю с базой данных.
+        private readonly AppDbContext _context;
 
-        public UserController(AppDbContext context) // AppDbContext context — это параметр, который ASP.NET Core автоматически “подсовывает” мне через механизм Dependency Injection (внедрение зависимостей)
+        public UserController(AppDbContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers() // async - нужна для асинхронности (выполнить такой-то запрос, не ожидая пока другой завершится и т.д.)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            return await _context.Users // Сервер не будет ждать, пока бд вернёт данные, а займётся другими делами. Как только база ответит — код продолжит выполнение.
+            return await _context.Users
                 .Select(u => new UserDto
                 {
                     Id = u.Id,
@@ -35,16 +31,17 @@ namespace Backend.Controllers
                     Phone = u.Phone,
                     Name = u.Name,
                     Resume = u.Resume,
+                    About = u.About,
                     Role = u.Role
                 })
-                .ToListAsync(); 
+                .ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound(); // NotFound() — это специальный метод, который возвращает HTTP-ответ с кодом 404 (Not Found). (Наследуется из ControllerBase)
+            if (user == null) return NotFound();
             return new UserDto
             {
                 Id = user.Id,
@@ -52,8 +49,41 @@ namespace Backend.Controllers
                 Phone = user.Phone,
                 Name = user.Name,
                 Resume = user.Resume,
+                About = user.About,
                 Role = user.Role
             };
+        }
+
+        // Публичный профиль (для отображения работодателя/кандидата по id, без email, без лишнего)
+        [AllowAnonymous]
+        [HttpGet("public/{id}")]
+        public async Task<ActionResult<PublicUserDto>> GetPublicProfile(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            if (user.Role == UserRole.Employer)
+            {
+                return new PublicUserDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Phone = user.Phone,
+                    About = user.About,
+                    Role = user.Role
+                };
+            }
+            else
+            {
+                return new PublicUserDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Phone = user.Phone,
+                    Resume = user.Resume,
+                    Role = user.Role
+                };
+            }
         }
 
         [HttpPost]
@@ -65,6 +95,7 @@ namespace Backend.Controllers
                 Phone = dto.Phone,
                 Name = dto.Name,
                 Resume = dto.Resume,
+                About = dto.About,
                 Role = dto.Role,
                 PasswordHash = "" // нужно предусмотреть создание пароля отдельно!
             };
@@ -86,6 +117,7 @@ namespace Backend.Controllers
             user.Phone = dto.Phone;
             user.Name = dto.Name;
             user.Resume = dto.Resume;
+            user.About = dto.About;
             user.Role = dto.Role;
             await _context.SaveChangesAsync();
             return NoContent();

@@ -9,6 +9,7 @@ function EmployerRegister() {
   const [confirm, setConfirm] = useState("");
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
+  const [about, setAbout] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ function EmployerRegister() {
     setLoading(true);
     try {
       await authAPI.registerEmployer({
-        email, password, phone, name
+        email, password, phone, name, about 
       });
       setSuccess("Регистрация успешна! Теперь войдите.");
       setTimeout(() => navigate("/login"), 1500);
@@ -87,10 +88,22 @@ function EmployerRegister() {
         type="text" 
         value={name} 
         onChange={e => setName(e.target.value)} 
-        placeholder="Название компании/ФИО" 
+        placeholder="Название компании/ФИО/Имя" 
         required 
         disabled={loading}
         className={styles.input}
+      />
+      <textarea
+        value={about}
+        onChange={e => setAbout(e.target.value)}
+        placeholder="Описание компании"
+        required
+        minLength={10}
+        maxLength={2000}
+        disabled={loading}
+        className={styles.input}
+        rows={5}
+        style={{ resize: "vertical", marginBottom: 15 }}
       />
       <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? "Регистрация..." : "Зарегистрироваться как работодатель"}

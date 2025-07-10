@@ -11,9 +11,14 @@ export default function Header({ isAuth, onLogout, userRole }) {
         <Link to="/" className={styles.link}>Вакансии</Link>
         {isAuth && <Link to="/profile" className={styles.link}>Профиль</Link>}
         {isAuth && <Link to="/applications" className={styles.link}>Отклики</Link>}
-        {/* Показывать только для работодателя */}
         {isAuth && userRole === "Employer" && (
           <Link to="/my-vacancies" className={styles.link}>Мои вакансии</Link>
+        )}
+        {!isAuth && (
+          <>
+            <Link to="/login" className={styles.link}>Войти</Link>
+            <Link to="/register" className={styles.link}>Регистрация</Link>
+          </>
         )}
       </nav>
       {isAuth && (

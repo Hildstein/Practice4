@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { applicationAPI } from "../../api/api";
 import Chat from "../chat/Chat";
 import styles from "./ApplicationDetail.module.css";
@@ -99,7 +99,12 @@ function ApplicationDetail() {
         <div className={styles.infoBlock}>
           <h3>{application.vacancyTitle}</h3>
           <p>
-            <strong>Кандидат:</strong> {application.candidateName}
+            <strong>Кандидат:</strong>{" "}
+            {application.candidateId ? (
+              <Link to={`/user/${application.candidateId}`}>{application.candidateName}</Link>
+            ) : (
+              application.candidateName
+            )}
           </p>
           {application.candidateResume && (
             <div className={styles.resumeBox}>

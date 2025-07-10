@@ -53,6 +53,7 @@ export const userAPI = {
   getProfile: () => api.get('/user/profile'),
   updateProfile: (userData) => api.put('/user/profile', userData),
   getUsers: () => api.get('/user'),
+  getPublicProfile: (id) => api.get(`/user/public/${id}`),
 };
 
 export const vacancyAPI = {

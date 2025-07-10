@@ -16,6 +16,7 @@ import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import VacancyDetail from "./components/vacancy/VacancyDetail";
 import PublicProfile from "./components/user/PublicProfile";
 
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [userRole, setUserRole] = useState(null);

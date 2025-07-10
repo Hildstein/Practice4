@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { messageAPI } from "../services/api";
+import { messageAPI } from "../../api/api";
+import styles from "./Chat.module.css";
 
-// Пропсы: vacancyId, candidateId, currentUserId
+// vacancyId, candidateId, currentUserId -- обязательные пропсы!
 function Chat({ vacancyId, candidateId, currentUserId }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -10,14 +11,12 @@ function Chat({ vacancyId, candidateId, currentUserId }) {
   const [error, setError] = useState("");
   const messagesEndRef = useRef(null);
 
-    // Автоскролл вниз
-  const scrollToBottom = () => {
+  // Скролл вниз при изменении сообщений
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [messages]);
 
-  console.log('vacancyId:', vacancyId, 'candidateId:', candidateId);
-
-   // Загрузка сообщений при смене чата (vacancyId, candidateId)
+  // Загрузка сообщений
   useEffect(() => {
     setLoading(true);
     setError("");
@@ -35,12 +34,7 @@ function Chat({ vacancyId, candidateId, currentUserId }) {
     if (vacancyId && candidateId) fetchMessages();
   }, [vacancyId, candidateId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-
- // Отправка сообщения
+  // Отправка сообщения
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
@@ -65,65 +59,42 @@ function Chat({ vacancyId, candidateId, currentUserId }) {
 
   if (loading) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
+      <div className={styles.loading}>
         Загрузка чата...
       </div>
     );
   }
 
   return (
-    <div style={{ border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#fff" }}>
-      <div style={{ 
-        padding: "10px 15px", 
-        borderBottom: "1px solid #ddd", 
-        backgroundColor: "#f8f9fa",
-        borderRadius: "8px 8px 0 0"
-      }}>
-        <h4 style={{ margin: 0 }}>Чат</h4>
+    <div className={styles.chatBox}>
+      <div className={styles.header}>
+        <h4>Чат</h4>
       </div>
-      
       {error && (
-        <div style={{ 
-          padding: "10px", 
-          color: "#dc3545", 
-          backgroundColor: "#f8d7da", 
-          borderRadius: "4px",
-          margin: "10px"
-        }}>
+        <div className={styles.error}>
           {error}
         </div>
       )}
-      
-      <div style={{ 
-        height: "300px", 
-        overflowY: "auto", 
-        padding: "10px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px"
-      }}>
+      <div className={styles.messages}>
         {messages.length === 0 ? (
-          <div style={{ textAlign: "center", color: "#666", marginTop: "20px" }}>
+          <div className={styles.emptyState}>
             Пока нет сообщений. Начните общение!
           </div>
         ) : (
           messages.map(message => (
             <div
               key={message.id}
-              style={{
-                alignSelf: message.senderId === currentUserId ? "flex-end" : "flex-start",
-                maxWidth: "70%",
-                padding: "8px 12px",
-                borderRadius: "12px",
-                backgroundColor: message.senderId === currentUserId ? "#007bff" : "#e9ecef",
-                color: message.senderId === currentUserId ? "white" : "black"
-              }}
+              className={
+                message.senderId === currentUserId
+                  ? `${styles.message} ${styles.myMessage}`
+                  : styles.message
+              }
             >
-              <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "2px" }}>
+              <div className={styles.sender}>
                 {message.senderName}
               </div>
               <div>{message.content}</div>
-              <div style={{ fontSize: "10px", opacity: 0.6, marginTop: "2px" }}>
+              <div className={styles.time}>
                 {new Date(message.sentAt).toLocaleString()}
               </div>
             </div>
@@ -131,13 +102,7 @@ function Chat({ vacancyId, candidateId, currentUserId }) {
         )}
         <div ref={messagesEndRef} />
       </div>
-      
-      <form onSubmit={handleSendMessage} style={{ 
-        padding: "10px", 
-        borderTop: "1px solid #ddd",
-        display: "flex",
-        gap: "10px"
-      }}>
+      <form onSubmit={handleSendMessage} className={styles.inputRow}>
         <input
           type="text"
           value={newMessage}
@@ -145,25 +110,12 @@ function Chat({ vacancyId, candidateId, currentUserId }) {
           placeholder="Введите сообщение..."
           maxLength={1000}
           disabled={sending}
-          style={{
-            flex: 1,
-            padding: "8px",
-            border: "1px solid #ddd",
-            borderRadius: "4px"
-          }}
+          className={styles.input}
         />
         <button
           type="submit"
           disabled={sending || !newMessage.trim()}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: sending || !newMessage.trim() ? "not-allowed" : "pointer",
-            opacity: sending || !newMessage.trim() ? 0.7 : 1
-          }}
+          className={styles.sendBtn}
         >
           {sending ? "..." : "Отправить"}
         </button>

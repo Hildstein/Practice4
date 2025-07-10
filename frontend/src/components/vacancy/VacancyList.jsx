@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import VacancyCard from "./VacancyCard";
-import { vacancyAPI } from "../../services/api";
-import styles from "../styles/Card.module.css";
+import { vacancyAPI } from "../../api/api";
+import styles from "./VacancyList.module.css";
 
 function VacancyList() {
   const [vacancies, setVacancies] = useState([]);
@@ -15,20 +15,16 @@ function VacancyList() {
     try {
       if (!append) setLoading(true);
       else setLoadingMore(true);
-      
       const res = await vacancyAPI.getVacancies(pageNum);
       const data = res.data;
-      
       if (append) {
         setVacancies(prev => [...prev, ...data.items]);
       } else {
         setVacancies(data.items);
       }
-      
       setHasMore(data.hasMore);
       setPage(pageNum);
     } catch (err) {
-      // Don't show error for unauthorized requests, just show empty list
       if (err.response?.status !== 401) {
         const errorMessage = err.message || err.response?.data || "Ошибка при загрузке вакансий";
         setError(typeof errorMessage === 'string' ? errorMessage : "Ошибка при загрузке вакансий");
@@ -52,7 +48,7 @@ function VacancyList() {
   return (
     <div className={styles.container}>
       <h2>Вакансии</h2>
-      {error && <div style={{ color: "#dc3545", textAlign: "center", marginBottom: "20px" }}>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
       {vacancies.length === 0 ? (
         <div className={styles.emptyState}>Нет вакансий</div>
       ) : (
@@ -60,21 +56,12 @@ function VacancyList() {
           {vacancies.map(vacancy => (
             <VacancyCard key={vacancy.id} vacancy={vacancy} />
           ))}
-          
           {hasMore && (
-            <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <div className={styles.loadMoreWrapper}>
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                style={{
-                  padding: "10px 20px",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: loadingMore ? "not-allowed" : "pointer",
-                  opacity: loadingMore ? 0.7 : 1
-                }}
+                className={styles.loadMoreBtn}
               >
                 {loadingMore ? "Загрузка..." : "Показать ещё"}
               </button>

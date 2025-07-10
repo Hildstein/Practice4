@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../../services/api";
-import formStyles from "../styles/Form.module.css";
+import { authAPI } from "../../api/api";
+import styles from "./EmployerRegister.module.css";
 
 function EmployerRegister() {
   const [email, setEmail] = useState("");
@@ -18,17 +18,14 @@ function EmployerRegister() {
     e.preventDefault();
     setError(""); 
     setSuccess("");
-    
     if (password.length < 6) {
       setError("Пароль должен быть не менее 6 символов");
       return;
     }
-    
     if (password !== confirm) {
       setError("Пароли не совпадают");
       return;
     }
-    
     setLoading(true);
     try {
       await authAPI.registerEmployer({
@@ -45,12 +42,10 @@ function EmployerRegister() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={formStyles.form}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <h2>Регистрация работодателя</h2>
-      
-      {error && <div className={formStyles.errorMessage}>{error}</div>}
-      {success && <div className={formStyles.successMessage}>{success}</div>}
-      
+      {error && <div className={styles.errorMessage}>{error}</div>}
+      {success && <div className={styles.successMessage}>{success}</div>}
       <input 
         type="email" 
         value={email} 
@@ -58,6 +53,7 @@ function EmployerRegister() {
         placeholder="Email" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="password" 
@@ -67,6 +63,7 @@ function EmployerRegister() {
         required 
         minLength={6}
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="password" 
@@ -75,6 +72,7 @@ function EmployerRegister() {
         placeholder="Повторите пароль" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="text" 
@@ -83,6 +81,7 @@ function EmployerRegister() {
         placeholder="Телефон" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="text" 
@@ -91,12 +90,11 @@ function EmployerRegister() {
         placeholder="Название компании/ФИО" 
         required 
         disabled={loading}
+        className={styles.input}
       />
-      
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? "Регистрация..." : "Зарегистрироваться как работодатель"}
       </button>
-      
       <p style={{ textAlign: "center", marginTop: "15px" }}>
         <a href="/register/candidate" style={{ color: "#007bff" }}>
           Зарегистрироваться как кандидат
@@ -105,5 +103,4 @@ function EmployerRegister() {
     </form>
   );
 }
-
 export default EmployerRegister;

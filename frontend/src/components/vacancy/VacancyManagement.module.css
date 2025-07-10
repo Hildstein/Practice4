@@ -12,13 +12,75 @@
   align-items: center;
   margin-bottom: 18px;
 }
+.createBtn {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background 0.18s;
+}
+.createBtn:hover {
+  background: #218838;
+}
 .list {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
+.vacancyCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 20px;
+}
+.editBtn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s;
+  text-align: center;
+}
+.editBtn:hover {
+  background: #0056b3;
+}
+.deleteBtn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.deleteBtn:hover {
+  background: #a71d2a;
+}
 .empty {
   text-align: center;
   color: #949494;
   margin-top: 24px;
+}
+.error {
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 20px;
 }

@@ -9,12 +9,6 @@
   flex-direction: column;
   gap: 18px;
 }
-
 .infoRow {
   margin-bottom: 8px;
-}
-
-.label {
-  font-weight: 500;
-  color: #333;
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { vacancyAPI } from "../../services/api";
-import styles from "../styles/Card.module.css";
+import { vacancyAPI } from "../../api/api";
+import styles from "./VacancyDetail.module.css";
 
 function VacancyDetail() {
   const { id } = useParams();
@@ -16,20 +16,18 @@ function VacancyDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className={styles.container}><div className={styles.emptyState}>Загрузка...</div></div>;
-  if (error) return <div className={styles.container}><div style={{ color: "#dc3545" }}>{error}</div></div>;
-  if (!vacancy) return <div className={styles.container}><div className={styles.emptyState}>Вакансия не найдена</div></div>;
+  if (loading) return <div className={styles.detailContainer}><div>Загрузка...</div></div>;
+  if (error) return <div className={styles.detailContainer}><div style={{ color: "#dc3545" }}>{error}</div></div>;
+  if (!vacancy) return <div className={styles.detailContainer}><div>Вакансия не найдена</div></div>;
 
   return (
-    <div className={styles.container}>
-      <div style={{ padding: "20px", border: "1px solid #ddd", background: "#fff", borderRadius: "8px" }}>
-        <h2>{vacancy.title}</h2>
-        <p><strong>Описание:</strong> {vacancy.description}</p>
-        <p><strong>Город:</strong> {vacancy.city}</p>
-        <p><strong>Работодатель:</strong> {vacancy.employerName}</p>
-        <p><strong>Email:</strong> {vacancy.employerEmail}</p>
-        <p><strong>Телефон:</strong> {vacancy.employerPhone}</p>
-      </div>
+    <div className={styles.detailContainer}>
+      <h2>{vacancy.title}</h2>
+      <div className={styles.infoRow}><b>Описание:</b> {vacancy.description}</div>
+      <div className={styles.infoRow}><b>Город:</b> {vacancy.city}</div>
+      <div className={styles.infoRow}><b>Работодатель:</b> {vacancy.employerName}</div>
+      <div className={styles.infoRow}><b>Email:</b> {vacancy.employerEmail}</div>
+      <div className={styles.infoRow}><b>Телефон:</b> {vacancy.employerPhone}</div>
     </div>
   );
 }

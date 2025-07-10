@@ -1,0 +1,13 @@
+.badge {
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+}
+.pending { background: #f0ad4e; }
+.accepted { background: #5cb85c; }
+.rejected { background: #d9534f; }
+.open { background: #5cb85c; }
+.closed { background: #d9534f; }

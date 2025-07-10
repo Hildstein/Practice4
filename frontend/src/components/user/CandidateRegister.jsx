@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../services/api";
-import formStyles from "../styles/Form.module.css";
+import { authAPI } from "../../api/api";
+import styles from "./CandidateRegister.module.css";
 
 function CandidateRegister() {
   const [email, setEmail] = useState("");
@@ -19,17 +19,15 @@ function CandidateRegister() {
     e.preventDefault();
     setError(""); 
     setSuccess("");
-    
+
     if (password.length < 6) {
       setError("Пароль должен быть не менее 6 символов");
       return;
     }
-    
     if (password !== confirm) {
       setError("Пароли не совпадают");
       return;
     }
-    
     setLoading(true);
     try {
       await authAPI.registerCandidate({
@@ -46,12 +44,10 @@ function CandidateRegister() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={formStyles.form}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <h2>Регистрация кандидата</h2>
-      
-      {error && <div className={formStyles.errorMessage}>{error}</div>}
-      {success && <div className={formStyles.successMessage}>{success}</div>}
-      
+      {error && <div className={styles.errorMessage}>{error}</div>}
+      {success && <div className={styles.successMessage}>{success}</div>}
       <input 
         type="email" 
         value={email} 
@@ -59,6 +55,7 @@ function CandidateRegister() {
         placeholder="Email" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="password" 
@@ -68,6 +65,7 @@ function CandidateRegister() {
         required 
         minLength={6}
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="password" 
@@ -76,6 +74,7 @@ function CandidateRegister() {
         placeholder="Повторите пароль" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="text" 
@@ -84,6 +83,7 @@ function CandidateRegister() {
         placeholder="Телефон" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <input 
         type="text" 
@@ -92,33 +92,23 @@ function CandidateRegister() {
         placeholder="Имя" 
         required 
         disabled={loading}
+        className={styles.input}
       />
       <textarea 
         value={resume} 
         onChange={e => setResume(e.target.value)} 
         placeholder="Резюме (минимум 50 символов)"
-        className={formStyles.form + " textarea"}
         rows={5}
         minLength={50}
         maxLength={2000}
         required 
         disabled={loading}
-        style={{ 
-          width: "100%",
-          padding: "10px",
-          marginBottom: "15px", 
-          border: "1px solid #ccc", 
-          borderRadius: "4px",
-          resize: "vertical",
-          fontSize: "14px",
-          boxSizing: "border-box"
-        }}
+        className={styles.input}
+        style={{ resize: "vertical" }}
       />
-      
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? "Регистрация..." : "Зарегистрироваться как кандидат"}
       </button>
-      
       <p style={{ textAlign: "center", marginTop: "15px" }}>
         <a href="/register/employer" style={{ color: "#007bff" }}>
           Зарегистрироваться как работодатель
@@ -127,5 +117,4 @@ function CandidateRegister() {
     </form>
   );
 }
-
 export default CandidateRegister;

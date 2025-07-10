@@ -23,8 +23,11 @@ namespace Backend.Models
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Имя должно быть от 2 до 100 символов")]
         public string Name { get; set; } = null!;
 
-        [StringLength(2000, MinimumLength = 50, ErrorMessage = "Резюме должно быть от 50 до 2000 символов")]
+        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Резюме должно быть от 20 до 2000 символов")]
         public string? Resume { get; set; }
+
+        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Описание компании должно быть от 20 до 2000 символов")]
+        public string? About { get; set; } // описание компании, только для работодателя
 
         [Required]
         [MinLength(6, ErrorMessage = "Пароль должен быть не менее 6 символов")]

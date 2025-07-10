@@ -107,18 +107,19 @@ namespace Backend.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
-            
+
             var userId = int.Parse(userIdClaim.Value);
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return NotFound();
-            
+
             return new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
                 Phone = user.Phone,
                 Name = user.Name,
-                Resume = user.Resume,
+                Resume = user.Role == UserRole.Candidate ? user.Resume : null,
+                About = user.Role == UserRole.Employer ? user.About : null,
                 Role = user.Role
             };
         }
@@ -128,17 +129,18 @@ namespace Backend.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
-            
+
             var userId = int.Parse(userIdClaim.Value);
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return NotFound();
 
-            user.Email = dto.Email;
-            user.Phone = dto.Phone;
             user.Name = dto.Name;
-            user.Resume = dto.Resume;
-            // Don't allow users to change their own role through profile update
-            
+            user.Phone = dto.Phone;
+            if (user.Role == UserRole.Candidate)
+                user.Resume = dto.Resume;
+            if (user.Role == UserRole.Employer)
+                user.About = dto.About;
+
             await _context.SaveChangesAsync();
             return NoContent();
         }

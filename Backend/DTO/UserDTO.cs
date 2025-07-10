@@ -9,6 +9,7 @@ namespace Backend.DTO
         public string Phone { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Resume { get; set; } = null!;
+        public string About { get; set; } = null!;
         public UserRole Role { get; set; }
     }
 }

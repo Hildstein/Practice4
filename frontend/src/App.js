@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/common/Header";
 import Login from "./components/user/Login";
@@ -17,15 +17,31 @@ import VacancyDetail from "./components/vacancy/VacancyDetail";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [userRole, setUserRole] = useState(null);
+
+  // Получаем роль пользователя из токена при изменении токена
+  useEffect(() => {
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUserRole(payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']);
+      } catch {
+        setUserRole(null);
+      }
+    } else {
+      setUserRole(null);
+    }
+  }, [token]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
+    setUserRole(null);
   };
 
   return (
     <BrowserRouter>
-      <Header isAuth={!!token} onLogout={handleLogout} />
+      <Header isAuth={!!token} userRole={userRole} onLogout={handleLogout} />
       <div style={{ padding: "20px" }}>
         <Routes>
           <Route path="/vacancy/:id" element={<VacancyDetail />} />

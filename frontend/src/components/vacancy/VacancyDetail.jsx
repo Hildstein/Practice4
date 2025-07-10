@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { vacancyAPI } from "../services/api";
+import { vacancyAPI } from "../../services/api";
 import styles from "../styles/Card.module.css";
 
 function VacancyDetail() {

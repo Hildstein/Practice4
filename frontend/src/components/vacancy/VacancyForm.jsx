@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { vacancyAPI } from "../services/api";
+import { vacancyAPI } from "../../services/api";
 import cardStyles from "../styles/Card.module.css";
 import formStyles from "../styles/Form.module.css";
 

@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 
 function ProtectedRoute({ children }) {
   const [isValidToken, setIsValidToken] = useState(null);

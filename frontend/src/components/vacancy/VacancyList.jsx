@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import VacancyCard from "./VacancyCard";
-import { vacancyAPI } from "../services/api";
+import { vacancyAPI } from "../../services/api";
 import styles from "../styles/Card.module.css";
 
 function VacancyList() {

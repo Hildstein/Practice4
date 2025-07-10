@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { applicationAPI } from "../services/api";
-import Chat from "./Chat";
+import { applicationAPI } from "../../services/api";
+import Chat from "../Chat";
 import styles from "../styles/Card.module.css";
 
 function ApplicationDetail() {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../services/api";
+import { authAPI } from "../../services/api";
 import styles from "../styles/Form.module.css";
 
 function Login({ onLogin }) {

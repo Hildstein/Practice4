@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userAPI } from "../services/api";
+import { userAPI } from "../../services/api";
 import styles from "../styles/Card.module.css";
 
 function Profile() {

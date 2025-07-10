@@ -1,0 +1,13 @@
+/.vs/
+Backend/.vs/
+*/.vs/
+
+# Build outputs
+Backend/bin/
+Backend/obj/
+frontend/node_modules/
+frontend/build/
+**/bin/
+**/obj/
+bin/
+obj/

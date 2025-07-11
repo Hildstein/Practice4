@@ -13,12 +13,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   bool _responding = false;
   String _responseMsg = '';
 
-  Future<void> _respond(int jobId) async {
+  Future<void> _respond(Job job) async {
     setState(() {
       _responding = true;
       _responseMsg = '';
     });
-    bool result = await ApiService().respondToJob(jobId);
+    bool result = await ApiService().respondToJob(job.id, job.title);
     setState(() {
       _responding = false;
       if (result) {
@@ -47,6 +47,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           final job = snapshot.data;
           if (job == null) return const SizedBox.shrink();
 
+          final api = ApiService();
+          final isCandidate = api.role == "Candidate";
+          final isOwnVacancy = api.userId == job.employerId;
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -66,21 +70,34 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 const SizedBox(height: 16),
                 Text(job.description),
                 const Spacer(),
-                ElevatedButton(
-                  onPressed: _responding ? null : () => _respond(job.id),
-                  child: _responding
-                      ? const CircularProgressIndicator()
-                      : const Text('Откликнуться'),
-                ),
-                if (_responseMsg.isNotEmpty)
+                if (isCandidate && !isOwnVacancy) ...[
+                  ElevatedButton(
+                    onPressed: _responding ? null : () => _respond(job),
+                    child: _responding
+                        ? const CircularProgressIndicator()
+                        : const Text('Откликнуться'),
+                  ),
+                  if (_responseMsg.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(
+                        _responseMsg,
+                        style: TextStyle(
+                          color: _responseMsg.contains('Ошибка')
+                              ? Colors.red
+                              : Colors.green,
+                        ),
+                      ),
+                    ),
+                ],
+                if (!isCandidate && isOwnVacancy)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
-                      _responseMsg,
-                      style: TextStyle(
-                        color: _responseMsg.contains('Ошибка')
-                            ? Colors.red
-                            : Colors.green,
+                      'Это ваша вакансия',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ),

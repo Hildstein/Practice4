@@ -27,12 +27,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logout() {
-    ApiService().setToken('');
+    ApiService().logout();
     Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
   Widget build(BuildContext context) {
+    final api = ApiService();
     return Scaffold(
       appBar: AppBar(title: const Text('Профиль')),
       body: loading
@@ -51,11 +52,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text('Резюме: ${profile!['resume']}'),
                   if (profile!['about'] != null)
                     Text('О себе: ${profile!['about']}'),
+                  Text('Роль: ${api.role ?? ""}'),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: _logout,
                     child: const Text('Выйти'),
                   ),
+                  if (api.role == "Employer")
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/my_vacancies');
+                      },
+                      child: const Text('Мои вакансии'),
+                    ),
                 ],
               ),
             ),

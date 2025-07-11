@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/job.dart';
 
-// <--- Укажи свой IP, если запускаешь с web!
 const String baseUrl = 'http://localhost:5182/api';
 
 class ApiService {
@@ -14,10 +13,10 @@ class ApiService {
   String? _role;
   int? _userId;
   String? _userName;
+  String? _userRealName;
 
   void setToken(String token) {
     _token = token;
-    // парсим роль и id из JWT (payload)
     try {
       final parts = token.split('.');
       if (parts.length != 3) return;
@@ -43,12 +42,14 @@ class ApiService {
   String? get role => _role;
   int? get userId => _userId;
   String? get userName => _userName;
+  String? get userRealName => _userRealName;
 
   void logout() {
     _token = null;
     _role = null;
     _userId = null;
     _userName = null;
+    _userRealName = null;
   }
 
   Future<List<Job>> fetchJobs() async {
@@ -148,14 +149,19 @@ class ApiService {
       headers: {'Authorization': 'Bearer $_token'},
     );
     if (response.statusCode == 200) {
-      return json.decode(response.body) as Map<String, dynamic>;
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      _userRealName = data['name'];
+      return data;
     } else {
       return null;
     }
   }
 
-  // Новый отклик на вакансию (по аналогии с вебом)
-  Future<bool> respondToJob(int jobId, String jobTitle) async {
+  Future<bool> respondToJob(
+    int jobId,
+    String vacancyTitle,
+    String candidateName,
+  ) async {
     if (_token == null || _role != "Candidate") return false;
     final response = await http.post(
       Uri.parse('$baseUrl/applications'),
@@ -165,8 +171,8 @@ class ApiService {
       },
       body: jsonEncode({
         'vacancyId': jobId,
-        'vacancyTitle': jobTitle,
-        'candidateName': _userName ?? "",
+        'vacancyTitle': vacancyTitle,
+        'candidateName': candidateName,
       }),
     );
     return response.statusCode == 200;
@@ -191,5 +197,129 @@ class ApiService {
     } else {
       throw Exception('Ошибка загрузки вакансий работодателя');
     }
+  }
+
+  Future<List<dynamic>> fetchApplications() async {
+    if (_token == null) return [];
+    final response = await http.get(
+      Uri.parse('$baseUrl/applications'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as List<dynamic>;
+    }
+    throw Exception('Ошибка загрузки откликов');
+  }
+
+  Future<Map<String, dynamic>?> fetchApplication(int id) async {
+    if (_token == null) return null;
+    final response = await http.get(
+      Uri.parse('$baseUrl/applications/$id'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as Map<String, dynamic>;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> fetchPublicProfile(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/user/public/$id'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as Map<String, dynamic>;
+    }
+    return null;
+  }
+
+  Future<List<dynamic>?> fetchMessages(int vacancyId, int candidateId) async {
+    if (_token == null) return [];
+    final response = await http.get(
+      Uri.parse('$baseUrl/messages/vacancy/$vacancyId/candidate/$candidateId'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as List<dynamic>;
+    }
+    return [];
+  }
+
+  Future<void> sendMessage(
+    int vacancyId,
+    int candidateId,
+    String content,
+  ) async {
+    if (_token == null) return;
+    await http.post(
+      Uri.parse('$baseUrl/messages'),
+      headers: {
+        'Authorization': 'Bearer $_token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'vacancyId': vacancyId,
+        'candidateId': candidateId,
+        'content': content,
+      }),
+    );
+  }
+
+  Future<void> updateApplicationStatus(int id, int status) async {
+    if (_token == null) return;
+    await http.put(
+      Uri.parse('$baseUrl/applications/$id/status?status=$status'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+  }
+
+  Future<void> withdrawApplication(int id) async {
+    if (_token == null) return;
+    await http.put(
+      Uri.parse('$baseUrl/applications/$id/withdraw'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+  }
+
+  Future<void> updateProfile(Map<String, dynamic> userData) async {
+    if (_token == null) return;
+    await http.put(
+      Uri.parse('$baseUrl/user/profile'),
+      headers: {
+        'Authorization': 'Bearer $_token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(userData),
+    );
+  }
+
+  Future<void> createVacancy(Map<String, dynamic> data) async {
+    if (_token == null) return;
+    await http.post(
+      Uri.parse('$baseUrl/vacancies'),
+      headers: {
+        'Authorization': 'Bearer $_token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
+  Future<void> updateVacancy(int id, Map<String, dynamic> data) async {
+    if (_token == null) return;
+    await http.put(
+      Uri.parse('$baseUrl/vacancies/$id'),
+      headers: {
+        'Authorization': 'Bearer $_token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
+  Future<void> deleteVacancy(int id) async {
+    if (_token == null) return;
+    await http.delete(
+      Uri.parse('$baseUrl/vacancies/$id'),
+      headers: {'Authorization': 'Bearer $_token'},
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/job.dart';
 import '../services/api_service.dart';
+import 'vacancy_form_screen.dart';
 
 class MyVacanciesScreen extends StatefulWidget {
   const MyVacanciesScreen({super.key});
@@ -18,10 +19,64 @@ class _MyVacanciesScreenState extends State<MyVacanciesScreen> {
     _jobs = ApiService().fetchMyVacancies();
   }
 
+  void _refresh() => setState(() => _jobs = ApiService().fetchMyVacancies());
+
+  void _edit(Job job) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VacancyFormScreen(vacancy: job, onChanged: _refresh),
+      ),
+    );
+  }
+
+  void _create() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => VacancyFormScreen(onChanged: _refresh)),
+    );
+  }
+
+  Future<void> _delete(int id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Удалить вакансию?'),
+        content: const Text('Вы уверены, что хотите удалить вакансию?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ApiService().deleteVacancy(id);
+      _refresh();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Вакансия удалена')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Мои вакансии')),
+      appBar: AppBar(
+        title: const Text('Мои вакансии'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: "Создать вакансию",
+            onPressed: _create,
+          ),
+        ],
+      ),
       body: FutureBuilder<List<Job>>(
         future: _jobs,
         builder: (context, snapshot) {
@@ -41,13 +96,27 @@ class _MyVacanciesScreenState extends State<MyVacanciesScreen> {
               final job = jobs[index];
               return ListTile(
                 title: Text(job.title),
-                subtitle: Text('${job.city}'),
-                onTap: () {
-                  Navigator.pushNamed(
+                subtitle: Text(job.city),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => _edit(job),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => _delete(job.id),
+                    ),
+                  ],
+                ),
+                onTap: () async {
+                  await Navigator.pushNamed(
                     context,
                     '/job_detail',
                     arguments: job.id,
                   );
+                  _refresh();
                 },
               );
             },

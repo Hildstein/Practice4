@@ -19,31 +19,27 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = '';
       _loading = true;
     });
-
     final api = ApiService();
     final token = await api.login(
-      _emailController.text.trim(),
+      _emailController.text,
       _passwordController.text,
     );
-
-    if (!mounted) return;
 
     setState(() {
       _loading = false;
     });
 
     if (token != null) {
-      // Сохраняем токен глобально!
-      ApiService().setToken(token);
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/jobs');
     } else {
       setState(() {
-        _error = 'Ошибка входа. Проверьте email и пароль.';
+        _error = 'Неверный email или пароль';
       });
     }
   }
 
-  void _goToRegister() {
+  void _gotoRegister() {
     Navigator.pushNamed(context, '/register');
   }
 
@@ -53,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: const Text('Вход')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
             TextField(
               controller: _emailController,
@@ -66,16 +62,28 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loading ? null : _login,
-              child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text('Войти'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: _loading
+                    ? const CircularProgressIndicator()
+                    : const Text('Войти'),
+              ),
             ),
             const SizedBox(height: 12),
-            TextButton(
-              onPressed: _goToRegister,
-              child: const Text('Зарегистрироваться'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _gotoRegister,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: const Text('Регистрация'),
+              ),
             ),
             if (_error.isNotEmpty)
               Padding(

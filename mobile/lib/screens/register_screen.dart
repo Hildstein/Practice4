@@ -29,6 +29,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _loading = true;
     });
 
+    // Простая валидация
+    if (!_emailController.text.contains('@') ||
+        _emailController.text.length < 5) {
+      setState(() {
+        _error = 'Введите корректный email';
+        _loading = false;
+      });
+      return;
+    }
+    if (_passwordController.text.length < 6) {
+      setState(() {
+        _error = 'Пароль минимум 6 символов';
+        _loading = false;
+      });
+      return;
+    }
+    if (_nameController.text.trim().isEmpty) {
+      setState(() {
+        _error = 'Имя обязательно';
+        _loading = false;
+      });
+      return;
+    }
+    if (_phoneController.text.trim().length < 6) {
+      setState(() {
+        _error = 'Телефон минимум 6 символов';
+        _loading = false;
+      });
+      return;
+    }
+    if (_role == UserRole.candidate &&
+        _resumeController.text.trim().length < 10) {
+      setState(() {
+        _error = 'Резюме минимум 10 символов';
+        _loading = false;
+      });
+      return;
+    }
+    if (_role == UserRole.employer &&
+        _aboutController.text.trim().length < 10) {
+      setState(() {
+        _error = 'Описание компании минимум 10 символов';
+        _loading = false;
+      });
+      return;
+    }
+
     bool success = false;
     final api = ApiService();
 
@@ -54,7 +101,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (success) {
       if (!mounted) return;
-      // После успешной регистрации переходим на экран входа
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Регистрация успешна!')));
       Navigator.pushReplacementNamed(context, '/login');
     } else {
       setState(() {
@@ -127,11 +176,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loading ? null : _register,
-              child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text('Зарегистрироваться'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _register,
+                child: _loading
+                    ? const CircularProgressIndicator()
+                    : const Text('Зарегистрироваться'),
+              ),
             ),
             if (_error.isNotEmpty)
               Padding(

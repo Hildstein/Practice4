@@ -31,7 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _loading = false;
     });
+
     if (token != null) {
+      // Сохраняем токен глобально!
+      ApiService().setToken(token);
       Navigator.pushReplacementNamed(context, '/jobs');
     } else {
       setState(() {

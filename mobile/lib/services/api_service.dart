@@ -2,43 +2,39 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/job.dart';
 
-/// Если используешь эмулятор Android, адрес должен быть 'http://10.0.2.2:5182/api'
-/// Если запускаешь на реальном устройстве или web, используй IP-адрес ПК.
+// <--- Укажи свой IP, если запускаешь с web!
 const String baseUrl = 'http://localhost:5182/api';
 
 class ApiService {
-  String? _token; // JWT токен пользователя
+  static final ApiService _instance = ApiService._internal();
+  factory ApiService() => _instance;
+  ApiService._internal();
 
-  // Сохранение токена для авторизации в других запросах
+  String? _token;
+
   void setToken(String token) {
     _token = token;
   }
 
-  // Получить все вакансии (public)
   Future<List<Job>> fetchJobs() async {
     final response = await http.get(
       Uri.parse('$baseUrl/vacancies?page=1&pageSize=30'),
     );
-    print('Ответ вакансий: ${response.body}');
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
-      // Если это просто массив
       if (decoded is List) {
         return decoded.map((json) => Job.fromJson(json)).toList();
       }
-      // Если внутри поле items
       if (decoded is Map<String, dynamic> && decoded.containsKey('items')) {
         final jobsList = decoded['items'] as List;
         return jobsList.map((json) => Job.fromJson(json)).toList();
       }
-      // Иначе ошибка
       throw Exception('Неожиданный формат ответа: ${response.body}');
     } else {
       throw Exception('Ошибка загрузки вакансий');
     }
   }
 
-  // Получить детали вакансии (public)
   Future<Job> fetchJobDetail(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/vacancies/$id'));
     if (response.statusCode == 200) {
@@ -48,24 +44,22 @@ class ApiService {
     }
   }
 
-  // Авторизация пользователя
   Future<String?> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
-    print('Ответ сервера: ${response.statusCode} ${response.body}');
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _token = data['token'];
       return _token;
     } else {
+      _token = null;
       return null;
     }
   }
 
-  // Регистрация кандидата
   Future<bool> registerCandidate({
     required String email,
     required String password,
@@ -87,7 +81,6 @@ class ApiService {
     return response.statusCode == 200;
   }
 
-  // Регистрация работодателя
   Future<bool> registerEmployer({
     required String email,
     required String password,
@@ -109,7 +102,6 @@ class ApiService {
     return response.statusCode == 200;
   }
 
-  // Получить профиль пользователя (требует JWT token)
   Future<Map<String, dynamic>?> getProfile() async {
     if (_token == null) return null;
     final response = await http.get(
@@ -123,7 +115,6 @@ class ApiService {
     }
   }
 
-  // Откликнуться на вакансию (пример, замени на свой эндпоинт/тело)
   Future<bool> respondToJob(int jobId) async {
     if (_token == null) return false;
     final response = await http.post(

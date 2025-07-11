@@ -26,6 +26,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void _logout() {
+    ApiService().setToken('');
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text('О себе: ${profile!['about']}'),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
+                    onPressed: _logout,
                     child: const Text('Выйти'),
                   ),
                 ],

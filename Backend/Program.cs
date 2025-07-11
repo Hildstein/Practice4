@@ -40,7 +40,7 @@ namespace Backend
                 options.AddPolicy("AllowFrontend", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:3000") // адрес твоего frontend
+                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });

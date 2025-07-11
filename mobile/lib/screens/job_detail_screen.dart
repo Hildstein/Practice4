@@ -2,8 +2,32 @@ import 'package:flutter/material.dart';
 import '../models/job.dart';
 import '../services/api_service.dart';
 
-class JobDetailScreen extends StatelessWidget {
+class JobDetailScreen extends StatefulWidget {
   const JobDetailScreen({super.key});
+
+  @override
+  State<JobDetailScreen> createState() => _JobDetailScreenState();
+}
+
+class _JobDetailScreenState extends State<JobDetailScreen> {
+  bool _responding = false;
+  String _responseMsg = '';
+
+  Future<void> _respond(int jobId) async {
+    setState(() {
+      _responding = true;
+      _responseMsg = '';
+    });
+    bool result = await ApiService().respondToJob(jobId);
+    setState(() {
+      _responding = false;
+      if (result) {
+        _responseMsg = 'Отклик отправлен!';
+      } else {
+        _responseMsg = 'Ошибка отклика или вы не авторизованы!';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +67,23 @@ class JobDetailScreen extends StatelessWidget {
                 Text(job.description),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () {
-                    // Отклик на вакансию
-                  },
-                  child: const Text('Откликнуться'),
+                  onPressed: _responding ? null : () => _respond(job.id),
+                  child: _responding
+                      ? const CircularProgressIndicator()
+                      : const Text('Откликнуться'),
                 ),
+                if (_responseMsg.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      _responseMsg,
+                      style: TextStyle(
+                        color: _responseMsg.contains('Ошибка')
+                            ? Colors.red
+                            : Colors.green,
+                      ),
+                    ),
+                  ),
               ],
             ),
           );

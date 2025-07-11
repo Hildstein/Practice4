@@ -26,8 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    if (!mounted)
-      return; // <--- добавлено для безопасного использования context
+    if (!mounted) return;
 
     setState(() {
       _loading = false;
@@ -39,6 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
         _error = 'Ошибка входа. Проверьте email и пароль.';
       });
     }
+  }
+
+  void _goToRegister() {
+    Navigator.pushNamed(context, '/register');
   }
 
   @override
@@ -65,6 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
               child: _loading
                   ? const CircularProgressIndicator()
                   : const Text('Войти'),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: _goToRegister,
+              child: const Text('Зарегистрироваться'),
             ),
             if (_error.isNotEmpty)
               Padding(
